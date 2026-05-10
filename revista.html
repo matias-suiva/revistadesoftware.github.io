@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitTrack Pro Times — Revista Ingeniería de Software II</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:    #0D0D0D;
+    --paper:  #F5F0E8;
+    --red:    #D42B2B;
+    --gold:   #C8972A;
+    --cream:  #EDE8DC;
+    --grey1:  #2A2A2A;
+    --grey2:  #555;
+    --grey3:  #999;
+    --white:  #FFFFFF;
+    --green:  #1A6B3A;
+    --blue:   #1A3A6B;
+    --purple: #4A1A6B;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65; overflow-x: hidden; }
+  p { margin-bottom: .85rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* TOPBAR */
+  .topbar { background: var(--ink); color: var(--white); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; padding: 9px 32px; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid var(--red); }
+  .topbar-nav { display: flex; gap: 20px; }
+  .topbar-nav a { color: var(--gold); text-decoration: none; cursor: pointer; transition: opacity .2s; }
+  .topbar-nav a:hover { opacity: .7; }
+
+  /* COVER */
+  .cover { min-height: 100vh; background: var(--ink); color: var(--white); display: grid; grid-template-rows: auto 1fr auto; position: relative; overflow: hidden; }
+  .cover::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 75% 15%, rgba(212,43,43,.22) 0%, transparent 65%), radial-gradient(ellipse 50% 60% at 5% 85%, rgba(200,151,42,.14) 0%, transparent 65%); pointer-events: none; }
+  .cover-top { border-bottom: 1px solid rgba(255,255,255,.12); padding: 18px 48px; display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+  .cover-main { display: grid; grid-template-columns: 1fr 420px; position: relative; z-index: 1; }
+  .cover-left { padding: 52px 48px; display: flex; flex-direction: column; justify-content: center; }
+  .cover-kicker { display: inline-block; background: var(--red); color: var(--white); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; padding: 5px 14px; margin-bottom: 26px; width: fit-content; }
+  .cover-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(80px, 11vw, 140px); line-height: .88; margin-bottom: 20px; letter-spacing: .02em; }
+  .cover-title .red { color: var(--red); }
+  .cover-deck { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 19px; color: rgba(255,255,255,.7); margin-bottom: 36px; line-height: 1.45; max-width: 480px; }
+  .cover-credits { display: flex; gap: 32px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: rgba(255,255,255,.4); border-top: 1px solid rgba(255,255,255,.1); padding-top: 22px; }
+  .cover-credits b { color: var(--gold); display: block; font-size: 9px; margin-bottom: 3px; }
+  .cover-right { background: var(--red); padding: 52px 36px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+  .cover-right::before { content: 'GYM'; font-family: 'Bebas Neue', sans-serif; font-size: 200px; color: rgba(0,0,0,.12); position: absolute; right: -30px; bottom: -20px; line-height: 1; }
+  .toc-label { font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 14px; }
+  .toc-feature { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--white); line-height: 1.25; margin-bottom: 24px; }
+  .toc-list { list-style: none; border-top: 1px solid rgba(255,255,255,.18); }
+  .toc-list li { display: flex; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.1); font-size: 13px; color: rgba(255,255,255,.75); }
+  .toc-list li span { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: rgba(255,255,255,.22); min-width: 30px; }
+  .cover-bottom { border-top: 1px solid rgba(255,255,255,.1); padding: 14px 48px; display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,.3); letter-spacing: .08em; text-transform: uppercase; position: relative; z-index: 1; }
+
+  /* LAYOUT */
+  .page { max-width: 1080px; margin: 0 auto; padding: 64px 48px; }
+  .heavy-rule { border: none; border-top: 3px solid var(--ink); margin: 0; }
+  .thin-rule { border: none; border-top: 1px solid rgba(0,0,0,.14); margin: 28px 0; }
+  .red-rule { border-top-color: var(--red) !important; }
+
+  /* SECTION HEADER */
+  .sec-header { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 36px; padding-bottom: 22px; border-bottom: 1px solid var(--ink); }
+  .sec-num { font-family: 'Bebas Neue', sans-serif; font-size: 88px; line-height: 1; color: var(--red); flex-shrink: 0; width: 84px; margin-top: -8px; }
+  .sec-info { flex: 1; }
+  .sec-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--grey3); margin-bottom: 3px; }
+  .sec-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; line-height: 1; margin-bottom: 4px; }
+  .sec-sub { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 17px; color: var(--grey2); }
+
+  /* EDITORIAL */
+  .editorial-wrap { background: var(--ink); color: var(--white); }
+  .ed-label { font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 18px; }
+  .ed-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; line-height: .92; margin-bottom: 36px; }
+  .ed-body { font-family: 'DM Serif Display', serif; font-size: 17.5px; line-height: 1.75; color: rgba(255,255,255,.82); column-count: 2; column-gap: 44px; }
+  .ed-body p { margin-bottom: 1.1rem; }
+  .ed-sig { margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.12); display: flex; gap: 40px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.35); }
+
+  /* GRIDS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+
+  /* PULL QUOTE */
+  .pull-quote { border-left: 5px solid var(--red); padding: 14px 22px; margin: 26px 0; background: var(--cream); }
+  .pull-quote p { font-family: 'DM Serif Display', serif; font-size: 18px; font-style: italic; line-height: 1.5; color: var(--ink); margin: 0; }
+
+  /* TABLES */
+  .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13.5px; }
+  .data-table thead tr { background: var(--ink); color: var(--white); }
+  .data-table thead th { padding: 13px 15px; text-align: left; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; }
+  .data-table td { padding: 11px 15px; border-bottom: 1px solid rgba(0,0,0,.08); vertical-align: top; }
+  .data-table tbody tr:nth-child(even) td { background: var(--cream); }
+  .data-table tbody tr:hover td { background: rgba(212,43,43,.04); }
+  .col-str { color: var(--blue); }
+  .col-ux { color: var(--green); }
+  .ok  { color: var(--green); font-weight: 700; }
+  .warn { color: #B8860B; font-weight: 700; }
+
+  /* CARDS */
+  .card { border: 1.5px solid rgba(0,0,0,.14); padding: 22px; background: var(--white); }
+  .card-label { font-size: 9.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); margin-bottom: 7px; }
+  .card-title { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 10px; line-height: 1.2; }
+  .card p { font-size: 13.5px; color: var(--grey2); }
+  .card-dark { background: var(--ink); border-color: var(--ink); color: var(--white); }
+  .card-dark .card-label { color: rgba(255,255,255,.45); }
+  .card-dark .card-title { color: var(--white); }
+  .card-dark p { color: rgba(255,255,255,.7); }
+  .card-red { background: var(--red); border-color: var(--red); color: var(--white); }
+  .card-red .card-label { color: rgba(255,255,255,.6); }
+  .card-red .card-title { color: var(--white); }
+  .card-red p { color: rgba(255,255,255,.82); }
+
+  /* COMIC PANELS */
+  .comic-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 2.5px solid var(--ink); margin: 22px 0; }
+  .comic-panel { border-right: 2.5px solid var(--ink); padding: 22px; }
+  .comic-panel:last-child { border-right: none; }
+  .bubble { background: var(--white); border: 2px solid var(--ink); border-radius: 10px 10px 10px 0; padding: 7px 12px; font-size: 13px; font-weight: 700; display: inline-block; margin-bottom: 12px; }
+  .panel-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin-bottom: 10px; }
+  .panel-section { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--grey3); margin: 10px 0 4px; }
+  .comic-panel ul { list-style: none; padding: 0; }
+  .comic-panel li { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 3px 0; border-bottom: 1px dotted rgba(0,0,0,.12); color: var(--grey1); }
+  .comic-panel li:last-child { border-bottom: none; }
+  .panel-green { background: #EAF7EF; }
+  .panel-amber { background: #FFFBF0; }
+  .panel-blue  { background: #EEF3FF; }
+
+  /* UML BOXES */
+  .uml-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0; }
+  .uml-box { border: 2px solid var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 11px; overflow: hidden; }
+  .uml-name { background: var(--ink); color: var(--white); text-align: center; padding: 10px 8px; font-size: 11.5px; font-weight: 700; letter-spacing: .05em; }
+  .uml-name.red    { background: var(--red); }
+  .uml-name.green  { background: var(--green); }
+  .uml-name.blue   { background: var(--blue); }
+  .uml-name.gold   { background: var(--gold); }
+  .uml-name.purple { background: var(--purple); }
+  .uml-sec { padding: 8px 10px; border-top: 1px solid rgba(0,0,0,.13); }
+  .uml-sec-label { font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: var(--grey3); margin-bottom: 4px; font-family: 'DM Sans', sans-serif; }
+  .uml-sec ul { list-style: none; padding: 0; }
+  .uml-sec li { padding: 2px 0; }
+  .uml-attr   { color: #1A3A6B; }
+  .uml-method { color: #1A6B3A; }
+
+  /* CODE */
+  .code-block { background: #141820; color: #CDD6F4; font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 20px 22px; border-left: 4px solid var(--red); margin: 14px 0; overflow-x: auto; line-height: 1.8; white-space: pre; }
+  .kw  { color: #CBA6F7; }
+  .cls { color: #F9E2AF; }
+  .fn  { color: #A6E3A1; }
+  .cm  { color: #585B70; font-style: italic; }
+  code { font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,.07); padding: 1px 5px; font-size: .88em; border-radius: 2px; }
+
+  /* SOLID TABLE */
+  .solid-table { width: 100%; border-collapse: collapse; margin: 18px 0; }
+  .solid-table thead { background: var(--ink); color: var(--white); }
+  .solid-table th { padding: 13px 14px; text-align: left; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; }
+  .solid-table td { padding: 16px 14px; border-bottom: 1px solid rgba(0,0,0,.08); vertical-align: top; font-size: 13.5px; }
+  .solid-table tbody tr:nth-child(even) td { background: var(--cream); }
+  .solid-letter { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--red); line-height: 1; display: block; }
+  .solid-name-small { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--grey3); }
+  .solid-table td:first-child { text-align: center; width: 82px; border-right: 2px solid rgba(0,0,0,.06); }
+  .avoids { color: #8B0000; font-size: 12.5px; font-style: italic; }
+
+  /* RIDDLES */
+  .riddle { border: 2px solid var(--ink); margin: 18px 0; overflow: hidden; }
+  .riddle-head { background: var(--ink); color: var(--white); padding: 12px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 19px; display: flex; align-items: center; gap: 14px; }
+  .riddle-num { background: var(--red); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .riddle-body { padding: 20px; background: var(--white); font-size: 14.5px; line-height: 1.65; }
+  .riddle-ans { background: var(--cream); padding: 12px 20px; font-size: 13px; border-top: 1px dashed rgba(0,0,0,.18); color: var(--grey1); }
+  .riddle-ans strong { color: var(--green); }
+
+  /* QA */
+  .qa { margin: 18px 0; }
+  .qa-q { font-family: 'DM Serif Display', serif; font-size: 16.5px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+  .qa-q::before { content: '?'; background: var(--red); color: var(--white); font-family: 'Bebas Neue', sans-serif; font-size: 16px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; }
+  .qa-a { padding-left: 38px; font-size: 14px; color: var(--grey1); }
+
+  /* CHAT */
+  .chat { max-width: 780px; margin: 26px auto; display: flex; flex-direction: column; gap: 14px; }
+  .msg { display: flex; gap: 13px; align-items: flex-start; }
+  .msg.ai { flex-direction: row-reverse; }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; border: 2px solid var(--ink); }
+  .av-dev  { background: var(--ink); }
+  .av-dev2 { background: var(--blue); }
+  .av-ai   { background: var(--green); }
+  .bubble-chat { padding: 13px 17px; max-width: 72%; font-size: 13.5px; line-height: 1.6; }
+  .msg .bubble-chat { background: var(--cream); border: 1px solid rgba(0,0,0,.1); }
+  .msg.ai .bubble-chat { background: #EAF7F0; border-color: var(--green); }
+  .chat-name { font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--grey3); display: block; margin-bottom: 5px; }
+
+  /* PROS / CONS */
+  .pros-cons { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--ink); margin: 24px 0; }
+  .pros-cons-col { padding: 24px; }
+  .pros-cons-col:first-child { border-right: 2px solid var(--ink); }
+  .pros-cons-col h4 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; margin-bottom: 14px; }
+  .pros-cons-col ul { list-style: none; }
+  .pros-cons-col li { padding: 7px 0; border-bottom: 1px dotted rgba(0,0,0,.13); font-size: 13.5px; }
+  .pros-cons-col li:last-child { border-bottom: none; }
+  .pros-col h4 { color: var(--green); }
+  .pros-col li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+  .cons-col h4 { color: var(--red); }
+  .cons-col li::before { content: '✗ '; color: var(--red); font-weight: 700; }
+
+  /* BACKCOVER */
+  .backcover { background: var(--ink); color: var(--white); padding: 88px 48px; text-align: center; }
+  .bc-label { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: .3em; color: var(--red); display: block; margin-bottom: 36px; }
+  .bc-quote { font-family: 'DM Serif Display', serif; font-size: 30px; font-style: italic; line-height: 1.45; max-width: 680px; margin: 0 auto 52px; color: rgba(255,255,255,.88); }
+  .credits-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(255,255,255,.08); max-width: 780px; margin: 0 auto 44px; border: 1px solid rgba(255,255,255,.08); }
+  .credit-cell { background: var(--ink); padding: 22px 16px; }
+  .credit-role { font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 7px; }
+  .credit-name { font-family: 'Bebas Neue', sans-serif; font-size: 19px; letter-spacing: .04em; }
+  .bc-meta { font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: .1em; text-transform: uppercase; }
+  .bc-final { font-size: 12px; color: rgba(255,255,255,.18); margin-top: 10px; font-style: italic; }
+
+  /* RANK BOX */
+  .rank-box { background: var(--ink); color: var(--white); padding: 24px 28px; margin-top: 26px; }
+  .rank-label { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--gold); margin-bottom: 14px; }
+  .rank-list { list-style: none; }
+  .rank-list li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 13.5px; }
+  .rank-list li:last-child { border-bottom: none; }
+
+  /* BAD CLASS */
+  .bad-box { border: 3px solid var(--red); background: #FFF8F8; padding: 20px 22px; margin: 18px 0; }
+  .bad-label { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--red); margin-bottom: 8px; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+  .page { animation: fadeUp .45s ease both; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>FitTrack Pro Times &mdash; Ing. de Software II &mdash; 2026</span>
+  <nav class="topbar-nav">
+    <a onclick="document.getElementById('editorial').scrollIntoView({behavior:'smooth'})">Editorial</a>
+    <a onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})">Diseño</a>
+    <a onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})">UX/UI</a>
+    <a onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})">OO</a>
+    <a onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})">UML</a>
+    <a onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})">SOLID</a>
+    <a onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})">Trivia</a>
+    <a onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})">Errores</a>
+    <a onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})">IA</a>
+  </nav>
+</div>
+
+<!-- ██ PORTADA ██ -->
+<div class="cover">
+  <div class="cover-top">
+    <span>CodeGym Press &mdash; Editorial Suiva &amp; Iramain</span>
+    <span>Ingeniería de Software II &mdash; Unidad 1 &mdash; Mayo 2026</span>
+    <span>Vol. 1 &mdash; N.° 1</span>
+  </div>
+  <div class="cover-main">
+    <div class="cover-left">
+      <div class="cover-kicker">★ Edición especial &mdash; Unidad 1 &mdash; 2026</div>
+      <h1 class="cover-title">FitTrack<br><span class="red">Pro</span><br>Times</h1>
+      <p class="cover-deck">La app de gym que se convirtió en el mejor ejercicio de Ingeniería de Software que hiciste.</p>
+      <div class="cover-credits">
+        <div><b>Editor en Jefe</b>Matias Suiva</div>
+        <div><b>Diseñador &amp; Redactor</b>Nicolas Iramain</div>
+        <div><b>Docente</b>Ing. M.J. Rabellino</div>
+        <div><b>Entrega</b>2 / 6 / 2026</div>
+      </div>
+    </div>
+    <div class="cover-right">
+      <div class="toc-label">En esta edición</div>
+      <h2 class="toc-feature">Todo sobre FitTrack Pro: el sistema de gym que usamos para entender el software</h2>
+      <ul class="toc-list">
+        <li><span>1</span>Diseño estructural vs. centrado en el usuario</li>
+        <li><span>2</span>UX &amp; UI: la app bajo la lupa</li>
+        <li><span>3</span>Diseño orientado a objetos</li>
+        <li><span>4</span>Diagramas de clases UML</li>
+        <li><span>5</span>Los 5 mandamientos SOLID</li>
+        <li><span>6</span>Trivia &amp; adivinanzas</li>
+        <li><span>7</span>Detectando errores de diseño</li>
+        <li><span>8</span>IA: ¿aliada o amenaza?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <span>Sistema base: App de gestión de gym (FitTrack Pro)</span>
+    <span>"Diseñar software es imaginar el futuro línea por línea."</span>
+    <span>Ingeniería de Software II &mdash; 2026</span>
+  </div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ EDITORIAL ██ -->
+<div class="editorial-wrap" id="editorial">
+  <div class="page">
+    <span class="ed-label">📣 Editorial</span>
+    <h2 class="ed-title">¿Qué es la<br>Ingeniería de<br>Software?</h2>
+    <div class="ed-body">
+      <p>Bienvenidos a <strong>FitTrack Pro Times</strong>, la revista que lleva los conceptos de la Ingeniería de Software II al mundo del gym. En cada sección vamos a aplicar los temas de la Unidad 1 sobre un mismo sistema: una app inventada de gestión de gimnasio llamada <strong>FitTrack Pro</strong>, que permite registrarse, reservar clases, seguir el progreso y pagar membresías.</p>
+      <p>La <strong>Ingeniería de Software</strong> es la disciplina que aplica principios de ingeniería para diseñar, construir, probar y mantener software de calidad. No se trata solo de escribir código: se trata de tomar decisiones intencionadas sobre cómo organizar un sistema para que sea robusto, escalable y útil para quien lo usa.</p>
+      <p>A lo largo de esta revista vamos a recorrer el diseño desde dos ángulos (estructural y centrado en el usuario), profundizar en la Programación Orientada a Objetos, aprender a leer y escribir diagramas UML, dominar los principios SOLID, y reflexionar sobre el rol de la IA en el desarrollo moderno.</p>
+      <p><em>¿Por qué el gym? Porque un sistema de gym tiene usuarios, membresías, clases, instructores, pagos y notificaciones. Es complejo sin ser imposible, y nos permite aplicar cada concepto de forma concreta y real. ¡A entrenar la mente!</em></p>
+    </div>
+    <div class="ed-sig">
+      <span><strong style="color:var(--gold)">Matias Suiva</strong> — Editor en Jefe</span>
+      <span><strong style="color:var(--gold)">Nicolas Iramain</strong> — Diseñador &amp; Redactor</span>
+      <span>CodeGym Press · Mayo 2026</span>
+    </div>
+  </div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S1: DISEÑO ██ -->
+<div class="page" id="s1">
+  <div class="sec-header">
+    <div class="sec-num">1</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección uno</div>
+      <h2 class="sec-title">Diseño de Software</h2>
+      <p class="sec-sub">"Diseñar antes de escribir código"</p>
+    </div>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Diseñar software no es decorarlo. Es decidir cómo va a funcionar, cómo se organiza internamente y cómo lo va a usar el usuario."</p>
+  </div>
+
+  <p>El diseño de software no es un proceso único. Existen dos grandes enfoques que debemos conocer y combinar: el <strong>diseño estructural</strong> (centrado en el sistema) y el <strong>diseño centrado en el usuario (DCU)</strong>.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Criterio</th>
+        <th>🏗️ Diseño Estructural</th>
+        <th>🧑‍💻 Diseño Centrado en el Usuario</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>¿Qué prioriza?</strong></td><td class="col-str">Arquitectura interna, módulos, clases e interfaces</td><td class="col-ux">Necesidades, emociones y contexto del usuario</td></tr>
+      <tr><td><strong>¿Quién lo aprecia?</strong></td><td class="col-str">Desarrolladores y arquitectos</td><td class="col-ux">Los socios del gym que usan la app</td></tr>
+      <tr><td><strong>Herramientas</strong></td><td class="col-str">UML, patrones de diseño, principios SOLID</td><td class="col-ux">Wireframes, prototipos, entrevistas, tests de usabilidad</td></tr>
+      <tr><td><strong>Ventajas</strong></td><td class="col-str">Sistema robusto, mantenible y escalable a largo plazo</td><td class="col-ux">Mayor adopción, satisfacción y fidelización del usuario</td></tr>
+      <tr><td><strong>Riesgo</strong></td><td class="col-str">App perfecta por dentro pero imposible de usar</td><td class="col-ux">App linda por fuera pero sin estructura sólida</td></tr>
+      <tr><td><strong>En FitTrack Pro</strong></td><td class="col-str">Clases: <code>Usuario</code>, <code>Membresía</code>, <code>ClaseGym</code>, <code>Pago</code></td><td class="col-ux">Pantalla "¿Qué querés hacer hoy? 💪" con accesos rápidos</td></tr>
+    </tbody>
+  </table>
+
+  <div class="two-col" style="margin-top:28px;">
+    <div class="card" style="border-left:4px solid var(--blue);">
+      <div class="card-label" style="color:var(--blue)">Diseño estructural en FitTrack Pro</div>
+      <h3 class="card-title">La app por dentro</h3>
+      <p>La pantalla principal sería: <em>"Seleccione módulo: GestionUsuarios / GestionClases / FacturacionMensual"</em>. Técnicamente correcto. Humanamente incomprensible para alguien que solo quiere reservar una clase de spinning.</p>
+    </div>
+    <div class="card card-red">
+      <div class="card-label">Diseño centrado en el usuario</div>
+      <h3 class="card-title">La app por fuera</h3>
+      <p>La pantalla principal dice: <em>"¿Qué querés hacer hoy? 💪 Reservar clase · 📊 Mi progreso · 💳 Renovar membresía"</em>. El código interno puede ser idéntico — la diferencia está en el punto de vista.</p>
+    </div>
+  </div>
+
+  <div class="pull-quote" style="margin-top:28px;">
+    <p>¡Los dos enfoques son <em>complementarios</em>, no excluyentes! Un buen sistema necesita estructura sólida <strong>Y</strong> buena experiencia de usuario.</p>
+  </div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S2: UX/UI ██ -->
+<div class="page" id="s2">
+  <div class="sec-header">
+    <div class="sec-num">2</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección dos</div>
+      <h2 class="sec-title">UX / UI</h2>
+      <p class="sec-sub">"Diseñando con empatía"</p>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:28px;">
+    <div class="card" style="border-left:4px solid var(--blue);">
+      <div class="card-label" style="color:var(--blue)">UI — User Interface</div>
+      <h3 class="card-title">¿Cómo se VE la app?</h3>
+      <p>Se trata del diseño visual: colores, botones, tipografías, imágenes, iconos. En FitTrack Pro: paleta azul marino + naranja energético, iconos de mancuernas, tipografía fuerte y deportiva, cards de perfil con foto y estadísticas. <em>UI es cómo está presentada la hamburguesa: el pan dorado, el queso derretido… ¡todo entra por los ojos!</em></p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--green);">
+      <div class="card-label" style="color:var(--green)">UX — User Experience</div>
+      <h3 class="card-title">¿Cómo se SIENTE usarla?</h3>
+      <p>Tiene que ver con la facilidad de uso, la rapidez, la lógica del recorrido, y si el usuario logra su objetivo sin frustrarse. ¿Puedo reservar una clase en 3 taps? ¿El flujo de pago es claro y sin confusiones? <em>UX es cómo se siente comer esa hamburguesa: ¿es fácil de agarrar? ¿Tiene buen sabor?</em></p>
+    </div>
+  </div>
+
+  <h3 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:14px;">🔍 Crítica de FitTrack Pro — evaluación UX + UI</h3>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Pantalla</th><th>Evaluación UX</th><th>Evaluación UI</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Registro</strong></td><td><span class="ok">✓ Excelente</span> — Solo 3 campos requeridos. Fluido y sin fricción.</td><td><span class="ok">✓ Excelente</span> — Botón "Empezar" en naranja, muy visible.</td></tr>
+      <tr><td><strong>Reserva de clase</strong></td><td><span class="ok">✓ Muy buena</span> — Calendario visual con disponibilidad en tiempo real.</td><td><span class="warn">⚠ Mejorable</span> — Iconos de disciplina pequeños en mobile.</td></tr>
+      <tr><td><strong>Seguimiento</strong></td><td><span class="ok">✓ Excelente</span> — Dashboard con gráfico de asistencia semanal. Motivador.</td><td><span class="ok">✓ Muy buena</span> — Verde/rojo para metas cumplidas/incumplidas.</td></tr>
+      <tr><td><strong>Pago de membresía</strong></td><td><span class="warn">⚠ Mejorable</span> — 5 pantallas para completar un pago. Demasiados pasos.</td><td><span class="ok">✓ Buena</span> — Formulario limpio, errores en línea claros.</td></tr>
+      <tr><td><strong>Notificaciones</strong></td><td><span class="ok">✓ Excelente</span> — Recordatorio 30 min antes de clase. El usuario nunca llega tarde.</td><td><span class="ok">✓ Buena</span> — Muestra nombre del instructor y clase. Personalizado.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rank-box">
+    <div class="rank-label">📊 Ranking FitTrack Pro</div>
+    <div class="two-col">
+      <div>
+        <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">🏆 Mejores decisiones UX</div>
+        <ol style="padding-left:18px;font-size:13.5px;line-height:2.1;">
+          <li>Reserva de clase en 3 taps</li>
+          <li>Notificación 30 min antes de clase</li>
+          <li>Historial de rutinas personales</li>
+          <li>Racha de asistencia visible en home</li>
+        </ol>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">❌ Puntos a mejorar</div>
+        <ol style="padding-left:18px;font-size:13.5px;line-height:2.1;">
+          <li>Proceso de pago en 5 pantallas → simplificar a 2</li>
+          <li>Iconos de disciplina demasiado pequeños en mobile</li>
+          <li>Falta modo oscuro para entrenamiento nocturno</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S3: OO ██ -->
+<div class="page" id="s3">
+  <div class="sec-header">
+    <div class="sec-num">3</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección tres</div>
+      <h2 class="sec-title">Diseño Orientado a Objetos</h2>
+      <p class="sec-sub">"¿Y si los objetos hablaran?"</p>
+    </div>
+  </div>
+
+  <p>La <strong>POO (Programación Orientada a Objetos)</strong> organiza el software en "objetos" que representan entidades del mundo real. En FitTrack Pro, los objetos son los socios, las membresías, las clases y los pagos. Cada uno tiene sus propios datos y comportamientos.</p>
+
+  <div class="comic-row">
+    <div class="comic-panel panel-green">
+      <div class="bubble">¡Hola! 👋</div>
+      <div class="panel-name" style="color:var(--green)">👤 Soy <em>Usuario</em></div>
+      <div class="panel-section">Atributos</div>
+      <ul>
+        <li class="uml-attr">- id: int</li>
+        <li class="uml-attr">- nombre: String</li>
+        <li class="uml-attr">- email: String</li>
+        <li class="uml-attr">- fechaRegistro: Date</li>
+      </ul>
+      <div class="panel-section">Métodos</div>
+      <ul>
+        <li class="uml-method">+ registrarse()</li>
+        <li class="uml-method">+ iniciarSesion()</li>
+        <li class="uml-method">+ actualizarPerfil()</li>
+      </ul>
+    </div>
+    <div class="comic-panel panel-amber">
+      <div class="bubble">¡Renová! 💳</div>
+      <div class="panel-name" style="color:var(--gold)">🏷️ Soy <em>Membresía</em></div>
+      <div class="panel-section">Atributos</div>
+      <ul>
+        <li class="uml-attr">- tipo: String</li>
+        <li class="uml-attr">- precio: float</li>
+        <li class="uml-attr">- fechaVencimiento: Date</li>
+      </ul>
+      <div class="panel-section">Métodos</div>
+      <ul>
+        <li class="uml-method">+ renovar()</li>
+        <li class="uml-method">+ estaActiva(): bool</li>
+        <li class="uml-method">+ calcularDescuento()</li>
+      </ul>
+    </div>
+    <div class="comic-panel panel-blue">
+      <div class="bubble">¡A sudar! 🏋️</div>
+      <div class="panel-name" style="color:var(--blue)">🏃 Soy <em>ClaseGym</em></div>
+      <div class="panel-section">Atributos</div>
+      <ul>
+        <li class="uml-attr">- nombre: String</li>
+        <li class="uml-attr">- instructor: String</li>
+        <li class="uml-attr">- horario: DateTime</li>
+        <li class="uml-attr">- cupoMaximo: int</li>
+      </ul>
+      <div class="panel-section">Métodos</div>
+      <ul>
+        <li class="uml-method">+ reservar(usuario)</li>
+        <li class="uml-method">+ cancelar(usuario)</li>
+        <li class="uml-method">+ getCuposLibres()</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="font-family:'DM Serif Display',serif;font-size:20px;margin:30px 0 14px;">Los 4 Pilares de la POO — en FitTrack Pro</h3>
+  <table class="data-table">
+    <thead><tr><th>Pilar</th><th>¿Qué significa?</th><th>En FitTrack Pro</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--red)">Abstracción</strong></td><td>Mostrar lo importante, ocultar la complejidad interna.</td><td>El socio toca "Reservar clase" sin ver cómo se verifica el cupo, se bloquea en la DB o se envía la confirmación.</td></tr>
+      <tr><td><strong style="color:var(--blue)">Encapsulamiento</strong></td><td>Proteger datos internos. Acceso solo por métodos.</td><td>El saldo de membresía es privado. Solo se modifica con <code>depositar()</code> o <code>cobrar()</code>, nunca directamente.</td></tr>
+      <tr><td><strong style="color:var(--green)">Herencia</strong></td><td>Una clase hija hereda atributos y métodos de la clase padre.</td><td><code>MembresiaBasica</code> y <code>MembresiaPremium</code> heredan de <code>Membresia</code>. Comparten precio y vencimiento, y agregan lo propio.</td></tr>
+      <tr><td><strong style="color:var(--purple)">Polimorfismo</strong></td><td>Mismo mensaje, distinto comportamiento según el objeto.</td><td><code>calcularDescuento()</code> se llama igual en Basic y Premium, pero devuelve 0% vs 20%. El sistema no necesita distinguirlas.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S4: UML ██ -->
+<div class="page" id="s4">
+  <div class="sec-header">
+    <div class="sec-num">4</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección cuatro</div>
+      <h2 class="sec-title">UML para Principiantes</h2>
+      <p class="sec-sub">"Tenés que conocer el diagrama de clases"</p>
+    </div>
+  </div>
+
+  <p><strong>UML</strong> (Unified Modeling Language) es un lenguaje visual para representar el diseño de un sistema. El <strong>Diagrama de Clases</strong> es como el plano de un edificio: muestra qué clases existen, qué datos guardan, qué pueden hacer y cómo se relacionan, todo <em>antes</em> de escribir código.</p>
+
+  <h4 style="font-family:'Bebas Neue',sans-serif;font-size:20px;margin:22px 0 12px;letter-spacing:.04em;">Diagrama de clases — FitTrack Pro</h4>
+
+  <div class="uml-grid">
+    <div class="uml-box">
+      <div class="uml-name">Usuario</div>
+      <div class="uml-sec"><div class="uml-sec-label">Atributos</div><ul><li class="uml-attr">- id: int</li><li class="uml-attr">- nombre: String</li><li class="uml-attr">- email: String</li><li class="uml-attr">- password: String</li></ul></div>
+      <div class="uml-sec"><div class="uml-sec-label">Métodos</div><ul><li class="uml-method">+ registrarse(): void</li><li class="uml-method">+ iniciarSesion(): bool</li><li class="uml-method">+ actualizarPerfil(): void</li></ul></div>
+    </div>
+    <div class="uml-box">
+      <div class="uml-name red">Membresia</div>
+      <div class="uml-sec"><div class="uml-sec-label">Atributos</div><ul><li class="uml-attr">- tipo: String</li><li class="uml-attr">- precio: float</li><li class="uml-attr">- fechaVencimiento: Date</li></ul></div>
+      <div class="uml-sec"><div class="uml-sec-label">Métodos</div><ul><li class="uml-method">+ renovar(): void</li><li class="uml-method">+ estaActiva(): bool</li><li class="uml-method">+ calcularDescuento(): float</li></ul></div>
+    </div>
+    <div class="uml-box">
+      <div class="uml-name green">ClaseGym</div>
+      <div class="uml-sec"><div class="uml-sec-label">Atributos</div><ul><li class="uml-attr">- nombre: String</li><li class="uml-attr">- instructor: String</li><li class="uml-attr">- horario: DateTime</li><li class="uml-attr">- cupoMaximo: int</li></ul></div>
+      <div class="uml-sec"><div class="uml-sec-label">Métodos</div><ul><li class="uml-method">+ reservar(u: Usuario)</li><li class="uml-method">+ cancelar(u: Usuario)</li><li class="uml-method">+ getCuposLibres(): int</li></ul></div>
+    </div>
+    <div class="uml-box">
+      <div class="uml-name blue">Pago</div>
+      <div class="uml-sec"><div class="uml-sec-label">Atributos</div><ul><li class="uml-attr">- monto: float</li><li class="uml-attr">- fecha: Date</li><li class="uml-attr">- metodo: String</li></ul></div>
+      <div class="uml-sec"><div class="uml-sec-label">Métodos</div><ul><li class="uml-method">+ procesar(): bool</li><li class="uml-method">+ emitirRecibo(): void</li></ul></div>
+    </div>
+    <div class="uml-box">
+      <div class="uml-name gold">MembresiaBasica</div>
+      <div class="uml-sec"><div class="uml-sec-label">Atributos</div><ul><li class="uml-attr">- accesoClases: int</li></ul></div>
+      <div class="uml-sec"><div class="uml-sec-label">Métodos</div><ul><li class="uml-method">+ calcularDescuento(): float</li><li class="uml-method">+ getAccesos(): int</li></ul></div>
+    </div>
+    <div class="uml-box">
+      <div class="uml-name purple">MembresiaPremium</div>
+      <div class="uml-sec"><div class="uml-sec-label">Atributos</div><ul><li class="uml-attr">- accesoIlimitado: bool</li><li class="uml-attr">- plusPersonal: bool</li></ul></div>
+      <div class="uml-sec"><div class="uml-sec-label">Métodos</div><ul><li class="uml-method">+ calcularDescuento(): float</li><li class="uml-method">+ activarPersonal(): void</li></ul></div>
+    </div>
+  </div>
+
+  <h4 style="font-family:'Bebas Neue',sans-serif;font-size:20px;margin:28px 0 12px;letter-spacing:.04em;">Relaciones entre clases</h4>
+  <table class="data-table">
+    <thead><tr><th>Relación</th><th>Símbolo UML</th><th>Ejemplo en FitTrack Pro</th><th>Interpretación</th></tr></thead>
+    <tbody>
+      <tr><td>Asociación</td><td><code>──</code></td><td>Usuario ── ClaseGym</td><td>"El usuario reserva una clase de gym"</td></tr>
+      <tr><td>Composición</td><td><code>◆──</code></td><td>Usuario ◆── Pago</td><td>"Si el usuario se elimina, sus pagos también desaparecen"</td></tr>
+      <tr><td>Herencia</td><td><code>──▷</code></td><td>MembresiaBasica ──▷ Membresia</td><td>"MembresiaBasica ES UN tipo de Membresía"</td></tr>
+      <tr><td>Agregación</td><td><code>◇──</code></td><td>Gym ◇── Instructor</td><td>"El instructor puede existir aunque no trabaje en este gym"</td></tr>
+    </tbody>
+  </table>
+  <div class="pull-quote">
+    <p><strong>Para quien nunca vio UML:</strong> cada caja es una clase. La franja oscura de arriba = nombre. La del medio = atributos (datos que guarda). La de abajo = métodos (lo que puede hacer). Las líneas entre cajas = cómo se relacionan.</p>
+  </div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S5: SOLID ██ -->
+<div class="page" id="s5">
+  <div class="sec-header">
+    <div class="sec-num">5</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección cinco</div>
+      <h2 class="sec-title">Principios de Diseño</h2>
+      <p class="sec-sub">"Los 5 mandamientos del código limpio"</p>
+    </div>
+  </div>
+
+  <p>Los principios <strong>SOLID</strong> son 5 guías para escribir código orientado a objetos más limpio, mantenible y flexible. No son reglas estrictas sino buenas prácticas que, aplicadas a FitTrack Pro, hacen que el sistema pueda crecer sin romperse.</p>
+
+  <table class="solid-table">
+    <thead><tr><th>Letra</th><th>¿Qué dice?</th><th>Ejemplo en FitTrack Pro</th><th>¿Qué problema evita?</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="solid-letter">S</span><span class="solid-name-small">Single Responsibility</span></td>
+        <td>Una clase debe tener una única razón para cambiar.</td>
+        <td>La clase <code>Pago</code> solo procesa pagos. No envía emails ni muestra pantallas. Para eso existe <code>NotificacionService</code>.</td>
+        <td class="avoids">Si no: clases enormes y difíciles de mantener. Cambiar el email obliga a tocar la clase de pago.</td>
+      </tr>
+      <tr>
+        <td><span class="solid-letter">O</span><span class="solid-name-small">Open / Closed</span></td>
+        <td>Abierto para extender, cerrado para modificar el código existente.</td>
+        <td>Para agregar "Pago con crypto" creamos <code>PagoCrypto extends Pago</code> sin modificar la clase <code>Pago</code> original que ya funciona.</td>
+        <td class="avoids">Si no: cada nueva función corre el riesgo de romper código que ya funcionaba en producción.</td>
+      </tr>
+      <tr>
+        <td><span class="solid-letter">L</span><span class="solid-name-small">Liskov Substitution</span></td>
+        <td>Las clases hijas deben poder reemplazar a la padre sin romper el programa.</td>
+        <td><code>MembresiaPremium</code> puede usarse donde se espere un objeto <code>Membresia</code> y todo funciona. Un <code>SocioInvitado</code> que no puede <code>renovar()</code> violaría Liskov.</td>
+        <td class="avoids">Si no: sustituciones inesperadas rompen el sistema de formas difíciles de detectar y reproducir.</td>
+      </tr>
+      <tr>
+        <td><span class="solid-letter">I</span><span class="solid-name-small">Interface Segregation</span></td>
+        <td>No obligues a una clase a implementar métodos que no usa.</td>
+        <td>Creamos <code>IReservable</code> solo para ClaseGym, y <code>IPagable</code> solo para Membresía. El <code>Instructor</code> no implementa <code>IPagable</code> porque no paga membresías.</td>
+        <td class="avoids">Si no: clases llenas de métodos vacíos o que tiran error porque no tienen sentido para ellas.</td>
+      </tr>
+      <tr>
+        <td><span class="solid-letter">D</span><span class="solid-name-small">Dependency Inversion</span></td>
+        <td>Depender de abstracciones (interfaces), no de clases concretas.</td>
+        <td><code>SistemaPago</code> depende de la interfaz <code>IMetodoPago</code>, no de <code>PagoTarjeta</code>. Mañana agregamos <code>PagoMercadoPago</code> sin tocar <code>SistemaPago</code>.</td>
+        <td class="avoids">Si no: cambiar una implementación obliga a reescribir toda la cadena de dependencias del sistema.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S6: TRIVIA ██ -->
+<div class="page" id="s6">
+  <div class="sec-header">
+    <div class="sec-num">6</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección seis</div>
+      <h2 class="sec-title">Juego / Trivia Final</h2>
+      <p class="sec-sub">"¿Cuánto aprendiste sobre FitTrack Pro?"</p>
+    </div>
+  </div>
+
+  <p>Tres adivinanzas sobre los temas de la Unidad 1. Las respuestas están al final de cada tarjeta — ¡pero intentalo antes de mirarlas!</p>
+
+  <div class="riddle">
+    <div class="riddle-head"><div class="riddle-num">1</div> Adivinanza — Principios de diseño</div>
+    <div class="riddle-body">Soy el principio que le dice a FitTrack Pro que, si mañana quieren agregar un nuevo método de pago como PayPal o cripto, pueden crear una nueva clase <strong>sin tocar ni una sola línea</strong> del código que ya existe y funciona. Los desarrolladores me aman porque los protejo de romper lo que ya estaba bien. ¿Quién soy?</div>
+    <div class="riddle-ans">✅ <strong>Respuesta: Principio Open/Closed (O de SOLID)</strong> — "Abierto para extender, cerrado para modificar".</div>
+  </div>
+
+  <div class="riddle">
+    <div class="riddle-head"><div class="riddle-num">2</div> Adivinanza — Relaciones UML</div>
+    <div class="riddle-body">En el diagrama de clases de FitTrack Pro, soy la relación que une a un <strong>Usuario</strong> con su historial de <strong>Pagos</strong>. Si el usuario se elimina del sistema, todos mis registros también desaparecen — no tengo razón de existir sin él. Soy más fuerte que la agregación. Me dibujan con un rombo pintado. ¿Qué relación soy?</div>
+    <div class="riddle-ans">✅ <strong>Respuesta: Composición</strong> (rombo pintado ◆) — relación de dependencia total. Las partes no pueden existir sin el todo.</div>
+  </div>
+
+  <div class="riddle">
+    <div class="riddle-head"><div class="riddle-num">3</div> Adivinanza — Pilares de la POO</div>
+    <div class="riddle-body">En FitTrack Pro, cuando el socio toca el botón "Reservar clase", no ve cómo el sistema verifica los cupos, bloquea el lugar en la base de datos, actualiza el contador ni envía la confirmación por push. Solo ve el botón y el resultado: <em>"¡Reserva confirmada! 💪"</em>. Soy uno de los 4 pilares de la Programación Orientada a Objetos. ¿Cuál?</div>
+    <div class="riddle-ans">✅ <strong>Respuesta: Abstracción</strong> — mostrar lo esencial al usuario y ocultar la complejidad interna del sistema.</div>
+  </div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S7: ERRORES ██ -->
+<div class="page" id="s7">
+  <div class="sec-header">
+    <div class="sec-num">7</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección siete</div>
+      <h2 class="sec-title">Detectando Errores de Diseño</h2>
+      <p class="sec-sub">"Cuando el software está mal pensado…"</p>
+    </div>
+  </div>
+
+  <p>Se nos presenta el siguiente diseño para analizar. ¿Qué está mal?</p>
+
+  <div class="bad-box">
+    <div class="bad-label">⚠ Diseño problemático — analizar con cuidado</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Usuario</span> {
+  <span class="cm">// Atributos del usuario</span>
+  - nombre: String
+  - edad: int
+
+  <span class="cm">// ¿Todos estos métodos deberían estar acá?</span>
+  - <span class="fn">guardarEnBaseDeDatos</span>()   <span class="cm">// ← persistencia</span>
+  - <span class="fn">mostrarPantalla</span>()          <span class="cm">// ← presentación</span>
+  - <span class="fn">enviarEmail</span>()              <span class="cm">// ← comunicación</span>
+}</div>
+  </div>
+
+  <div class="qa">
+    <div class="qa-q">¿Qué problemas observás en este diseño?</div>
+    <div class="qa-a">La clase <code>Usuario</code> mezcla tres responsabilidades completamente distintas: persistencia (<code>guardarEnBaseDeDatos</code>), presentación (<code>mostrarPantalla</code>) y comunicación (<code>enviarEmail</code>). Si cambia la base de datos, tenemos que tocar <code>Usuario</code>. Si cambia la UI, también. Si cambia el proveedor de email, también. Una sola clase acumula demasiados motivos para cambiar.</div>
+  </div>
+
+  <div class="qa">
+    <div class="qa-q">¿Tiene demasiadas responsabilidades? ¿Por qué?</div>
+    <div class="qa-a">Sí. Viola claramente el <strong>Principio de Responsabilidad Única (S de SOLID)</strong>: una clase debe tener una sola razón para cambiar. Aquí tiene al menos tres: lógica del usuario, acceso a datos y envío de mensajes. Cada una puede cambiar por motivos completamente independientes.</div>
+  </div>
+
+  <div class="qa">
+    <div class="qa-q">¿Cómo mejoraríamos este diseño?</div>
+    <div class="qa-a">Separando en clases especializadas con una única responsabilidad cada una:</div>
+  </div>
+
+  <div class="code-block"><span class="cls">Usuario</span>            → solo guarda los datos del usuario (nombre, edad)
+<span class="cls">UsuarioRepositorio</span> → <span class="fn">guardarEnBaseDeDatos</span>()  <span class="cm">// acceso a datos</span>
+<span class="cls">UsuarioVista</span>       → <span class="fn">mostrarPantalla</span>()         <span class="cm">// presentación</span>
+<span class="cls">EmailService</span>       → <span class="fn">enviarEmail</span>()             <span class="cm">// comunicación</span></div>
+
+  <hr class="thin-rule red-rule">
+
+  <h3 style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:14px;">🏋️ Error detectado en FitTrack Pro</h3>
+
+  <p><strong>Error encontrado:</strong> La clase <code>ClaseGym</code> en nuestro sistema tiene el método <code>enviarRecordatorioEmail()</code> para notificar a los socios antes de la clase. Viola el Principio de Responsabilidad Única: <code>ClaseGym</code> no debería saber cómo enviar emails. Eso no es su trabajo.</p>
+
+  <div class="code-block"><span class="kw">class</span> <span class="cls">ClaseGym</span> {
+  - nombre, horario, cupoMaximo...
+  + <span class="fn">reservar</span>(usuario)
+  + <span class="fn">cancelar</span>(usuario)
+  + <span class="fn">enviarRecordatorioEmail</span>()  <span class="cm">// ← ❌ no debería estar acá</span>
+}</div>
+
+  <p><strong>Mejora propuesta:</strong> Crear una clase separada <code>NotificacionService</code> para todas las notificaciones. Si mañana pasamos de email a WhatsApp, solo tocamos <code>NotificacionService</code> y <code>ClaseGym</code> no necesita cambiar.</p>
+
+  <div class="code-block"><span class="kw">class</span> <span class="cls">NotificacionService</span> {
+  + <span class="fn">enviarRecordatorio</span>(clase: <span class="cls">ClaseGym</span>, socios: List&lt;<span class="cls">Usuario</span>&gt;)
+  + <span class="fn">enviarConfirmacion</span>(usuario: <span class="cls">Usuario</span>, clase: <span class="cls">ClaseGym</span>)
+  + <span class="fn">enviarFactura</span>(usuario: <span class="cls">Usuario</span>, pago: <span class="cls">Pago</span>)
+}
+<span class="cm">// ClaseGym vuelve a tener una única responsabilidad: gestionar la clase</span></div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ S8: IA ██ -->
+<div class="page" id="s8">
+  <div class="sec-header">
+    <div class="sec-num">8</div>
+    <div class="sec-info">
+      <div class="sec-label">Sección ocho</div>
+      <h2 class="sec-title">IA &amp; Ingeniería de Software</h2>
+      <p class="sec-sub">"¿La IA reemplaza o potencia al desarrollador?"</p>
+    </div>
+  </div>
+
+  <p>Conversación simulada entre los desarrolladores de FitTrack Pro y una herramienta de IA, durante el proceso de diseño del sistema. Se evidencian ventajas, limitaciones y la importancia del juicio humano:</p>
+
+  <div class="chat">
+    <div class="msg">
+      <div class="avatar av-dev">👨‍💻</div>
+      <div class="bubble-chat"><span class="chat-name">Matias · Dev</span>Hola IA, estoy diseñando FitTrack Pro. No sé si hacer que la clase <code>Usuario</code> tenga el método <code>reservarClase()</code> o si debería estar en otra clase. ¿Qué me recomendás?</div>
+    </div>
+    <div class="msg ai">
+      <div class="avatar av-ai">🤖</div>
+      <div class="bubble-chat"><span class="chat-name">IA · Asistente</span>Buena pregunta. Según el Principio de Responsabilidad Única (S de SOLID), <code>reservarClase()</code> no debería estar en <code>Usuario</code>. La responsabilidad de reservar pertenece a un servicio como <code>ReservaService</code>, que coordine la interacción entre <code>Usuario</code> y <code>ClaseGym</code>.</div>
+    </div>
+    <div class="msg">
+      <div class="avatar av-dev">👨‍💻</div>
+      <div class="bubble-chat"><span class="chat-name">Matias · Dev</span>Tiene sentido. ¿Y si el usuario también puede cancelar? ¿También en <code>ReservaService</code>?</div>
+    </div>
+    <div class="msg ai">
+      <div class="avatar av-ai">🤖</div>
+      <div class="bubble-chat"><span class="chat-name">IA · Asistente</span>Exacto. <code>ReservaService</code> podría tener: <code>reservar(usuario, clase)</code>, <code>cancelar(usuario, clase)</code> y <code>getReservasActivas(usuario)</code>. Así la lógica de reservas queda centralizada y es fácil de testear de forma independiente.</div>
+    </div>
+    <div class="msg">
+      <div class="avatar av-dev2">👨‍💻</div>
+      <div class="bubble-chat"><span class="chat-name">Nicolas · Dev</span>Espera — ¿y si la IA está equivocada? ¿No podría haber casos donde sea mejor tener <code>reservar()</code> en <code>Usuario</code>?</div>
+    </div>
+    <div class="msg ai">
+      <div class="avatar av-ai">🤖</div>
+      <div class="bubble-chat"><span class="chat-name">IA · Asistente</span>Muy buen punto. Mi sugerencia se basa en SOLID, pero el contexto siempre importa. En un sistema pequeño, a veces la sobre-ingeniería crea más problemas que soluciones. <strong>Esa decisión final siempre la toma el desarrollador, no yo.</strong></div>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pros-cons-col pros-col">
+      <h4>✅ Ventajas del uso de IA</h4>
+      <ul>
+        <li>Sugiere patrones de diseño conocidos con rapidez</li>
+        <li>Ayuda a detectar violaciones de SOLID y errores UML</li>
+        <li>Acelera la generación de código repetitivo (getters, setters)</li>
+        <li>Explica conceptos complejos con ejemplos concretos</li>
+        <li>Disponible 24/7, sin cansancio ni juicios</li>
+      </ul>
+    </div>
+    <div class="pros-cons-col cons-col">
+      <h4>⚠ Limitaciones y riesgos</h4>
+      <ul>
+        <li>Puede sugerir arquitecturas demasiado complejas para el contexto</li>
+        <li>No conoce el dominio de negocio específico del gym</li>
+        <li>El dev siempre debe validar y razonar la respuesta</li>
+        <li>No reemplaza el juicio profesional ni la responsabilidad del equipo</li>
+        <li>Puede generar código que funciona pero no tiene sentido de negocio</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pull-quote">
+    <p>La IA es una herramienta poderosa, pero el desarrollador sigue siendo quien entiende el contexto, toma las decisiones y se hace responsable del resultado.</p>
+  </div>
+</div>
+
+<hr class="heavy-rule">
+
+<!-- ██ CONTRATAPA ██ -->
+<div class="backcover">
+  <span class="bc-label">✍ Contratapa</span>
+  <p class="bc-quote">"Diseñar software es imaginar el futuro línea por línea, clase por clase, con la disciplina del ingeniero y la empatía del diseñador."</p>
+  <div class="credits-grid">
+    <div class="credit-cell"><span class="credit-role">Editor en Jefe</span><span class="credit-name">Matias Suiva</span></div>
+    <div class="credit-cell"><span class="credit-role">Diseñador &amp; Redactor</span><span class="credit-name">Nicolas Iramain</span></div>
+    <div class="credit-cell"><span class="credit-role">Docente</span><span class="credit-name">Ing. M.J. Rabellino</span></div>
+    <div class="credit-cell"><span class="credit-role">Sistema base</span><span class="credit-name">FitTrack Pro</span></div>
+  </div>
+  <p class="bc-meta">Ingeniería de Software II &mdash; Unidad 1 &mdash; CodeGym Press &mdash; Mayo 2026</p>
+  <p class="bc-final">Reflexión final: No te limites, aprende divirtiéndote y creando libremente.</p>
+</div>
+
+</body>
+</html>
